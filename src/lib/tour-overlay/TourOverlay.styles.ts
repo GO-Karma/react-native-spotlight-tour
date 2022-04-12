@@ -1,5 +1,6 @@
-import { Animated, ViewProps } from "react-native";
+import { ViewProps } from "react-native";
 import styled from "styled-components/native";
+import ReAnimated from "react-native-reanimated"
 
 import { vh, vw } from "../../helpers/responsive";
 
@@ -8,6 +9,6 @@ export const OverlayView = styled.View`
   width: ${vw(100)};
 `;
 
-export const TipView = styled(Animated.View)<ViewProps>`
+export const TipView = styled(ReAnimated.View)<ViewProps>`
   position: absolute;
 `;

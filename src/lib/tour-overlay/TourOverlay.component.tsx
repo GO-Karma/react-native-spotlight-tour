@@ -1,14 +1,13 @@
-import React, { useEffect, useImperativeHandle, useMemo, useState } from "react";
+import React, { useEffect, useImperativeHandle, useState } from "react";
 import {
-  Animated,
   LayoutChangeEvent,
   LayoutRectangle,
   Modal,
-  Platform,
   StyleProp,
   ViewStyle
 } from "react-native";
-import Svg, { Circle, Defs, Mask, Rect, rgbaArray } from "react-native-svg";
+import Svg, { Defs, Mask, Rect, RectProps, rgbaArray } from "react-native-svg";
+import ReAnimated, { useAnimatedProps, useAnimatedStyle, useSharedValue, withSpring, withTiming } from "react-native-reanimated"
 
 import { vhDP, vwDP } from "../../helpers/responsive";
 import { Align, Position, SpotlightTourCtx } from "../SpotlightTour.context";
@@ -25,7 +24,8 @@ interface TourOverlayProps {
   tour: SpotlightTourCtx;
 }
 
-const AnimatedCircle = Animated.createAnimatedComponent(Circle);
+// const AnimatedCircle = Animated.createAnimatedComponent(Circle);
+const AnimatedRect = ReAnimated.createAnimatedComponent(Rect)
 
 export const TourOverlay = React.forwardRef<TourOverlayRef, TourOverlayProps>((props, ref) => {
   const { color = "black", opacity = 0.45, tour } = props;
@@ -35,21 +35,30 @@ export const TourOverlay = React.forwardRef<TourOverlayRef, TourOverlayProps>((p
     return null;
   }
 
+  const size = useSharedValue({ width: 0, height: 0 })
+  const location = useSharedValue({ x: 0, y: 0 })
+  const tipOp = useSharedValue(0)
+
   const [tourStep, setTourStep] = useState(steps[current]);
   const [tipStyle, setTipStyle] = useState<StyleProp<ViewStyle>>();
-  const [radius] = useState(new Animated.Value(0));
-  const [center] = useState(new Animated.ValueXY({ x: 0, y: 0 }));
-  const [tipOpacity] = useState(new Animated.Value(0));
+  // const [radius] = useState(new Animated.Value(0));
+  // const [center] = useState(new Animated.ValueXY({ x: 0, y: 0 }));
+  // const [tipOpacity] = useState(new Animated.Value(0));
 
   const r = (Math.max(spot.width, spot.height) / 2) * 1.15;
   const cx = spot.x + (spot.width / 2);
   const cy = spot.y + (spot.height / 2);
 
-  const useNativeDriver = useMemo(() => Platform.select({
-    android: false,
-    default: false,
-    ios: true
-  }), [Platform.OS]);
+  const xLoc = spot.x
+  const yLoc = spot.y
+  const width = spot.width
+  const height = spot.height
+
+  // const useNativeDriver = useMemo(() => Platform.select({
+  //   android: false,
+  //   default: false,
+  //   ios: true
+  // }), [Platform.OS]);
 
   const getTipStyles = (tipLayout: LayoutRectangle): StyleProp<ViewStyle> => {
     const tipMargin: string = "2%";
@@ -91,30 +100,30 @@ export const TourOverlay = React.forwardRef<TourOverlayRef, TourOverlayProps>((p
   };
 
   useEffect(() => {
-    const moveIn = Animated.parallel([
-      Animated.spring(center, {
-        damping: 50,
-        mass: 5,
-        stiffness: 300,
-        toValue: { x: cx, y: cy },
-        useNativeDriver
-      }),
-      Animated.spring(radius, {
-        damping: 30,
-        mass: 5,
-        stiffness: 300,
-        toValue: r,
-        useNativeDriver
-      }),
-      Animated.timing(tipOpacity, {
-        delay: 500,
-        duration: 500,
-        toValue: 1,
-        useNativeDriver
-      })
-    ]);
+    // const moveIn = Animated.parallel([
+    //   Animated.spring(center, {
+    //     damping: 50,
+    //     mass: 5,
+    //     stiffness: 300,
+    //     toValue: { x: cx, y: cy },
+    //     useNativeDriver
+    //   }),
+    //   Animated.spring(radius, {
+    //     damping: 30,
+    //     mass: 5,
+    //     stiffness: 300,
+    //     toValue: r,
+    //     useNativeDriver
+    //   }),
+    //   Animated.timing(tipOpacity, {
+    //     delay: 500,
+    //     duration: 500,
+    //     toValue: 1,
+    //     useNativeDriver
+    //   })
+    // ]);
 
-    moveIn.stop();
+    // moveIn.stop();
     setTourStep(steps[current]);
 
     /**
@@ -124,49 +133,69 @@ export const TourOverlay = React.forwardRef<TourOverlayRef, TourOverlayProps>((p
      */
     setTimeout(() => {
       setTipStyle(undefined);
-      moveIn.start();
+      size.value.width = withSpring(width + 10)
+      size.value.height = withSpring(height + 10)
+      location.value.x = withSpring(xLoc)
+      location.value.y = withSpring(yLoc)
+      tipOp.value = withTiming(1, { duration: 500 })
+      // moveIn.start();
     });
   }, [spot, current]);
 
   useImperativeHandle(ref, () => ({
     hideTip() {
-      return new Promise<void>((resolve, reject) => {
-        Animated.timing(tipOpacity, {
-          duration: 200,
-          toValue: 0,
-          useNativeDriver
-        })
-        .start(({ finished }) => finished
-          ? resolve()
-          : reject()
-        );
+      return new Promise<void>((resolve) => {
+        // Animated.timing(tipOpacity, {
+        //   duration: 200,
+        //   toValue: 0,
+        //   useNativeDriver
+        // })
+        // .start(({ finished }) => finished
+        //   ? resolve()
+        //   : reject()
+        // );
+        tipOp.value = withTiming(0, { duration: 200 })
+        setTimeout(() => {
+          resolve()
+        }, 200)
       });
     }
   }));
+
+  const animatedProps = useAnimatedProps<RectProps>(() => ({
+    width: size.value.width,
+    height: size.value.height,
+    x: location.value.x,
+    y: location.value.y
+  }))
+
+  const tipOpacityStyle = useAnimatedStyle(() => ({
+    opacity: tipOp.value
+  }))
 
   return (
     <Modal
       animationType="fade"
       presentationStyle="overFullScreen"
       transparent={true}
-      visible={true}
-    >
+      visible={true}>
       <OverlayView accessibilityLabel="Tour Overlay View">
         <Svg
           accessibilityLabel="Svg overlay view"
           height="100%"
           width="100%"
-          viewBox={`0 0 ${vwDP(100)} ${vhDP(100)}`}
-        >
+          viewBox={`0 0 ${vwDP(100)} ${vhDP(100)}`}>
           <Defs>
             <Mask id="mask" x={0} y={0} height="100%" width="100%">
               <Rect height="100%" width="100%" fill="#fff" />
-              <AnimatedCircle
+              {/* <AnimatedCircle
                 r={radius}
                 cx={center.x}
                 cy={center.y}
                 fill="black"
-              />
+              /> */}
+
+              <AnimatedRect animatedProps={animatedProps} fill="black" />
             </Mask>
           </Defs>
 
@@ -182,15 +211,14 @@ export const TourOverlay = React.forwardRef<TourOverlayRef, TourOverlayProps>((p
         <TipView
           accessibilityLabel="Tip Overlay View"
           onLayout={measureTip}
-          style={[tipStyle, { opacity: tipOpacity }]}
-        >
+          style={[tipStyle, tipOpacityStyle]}>
           {tourStep.render({
             current,
             isFirst: current === 0,
             isLast: current === steps.length - 1,
             next,
             previous,
-            stop
+            stop,
           })}
         </TipView>
       </OverlayView>
