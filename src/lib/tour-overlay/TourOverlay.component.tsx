@@ -7,7 +7,7 @@ import {
   ViewStyle
 } from "react-native";
 import Svg, { Defs, Mask, Rect, RectProps, rgbaArray } from "react-native-svg";
-import ReAnimated, { useAnimatedProps, useAnimatedStyle, useSharedValue, withSpring, withTiming } from "react-native-reanimated"
+import ReAnimated, { Easing, useAnimatedProps, useAnimatedStyle, useSharedValue, withDelay, withTiming } from "react-native-reanimated"
 
 import { vhDP, vwDP } from "../../helpers/responsive";
 import { Align, Position, SpotlightTourCtx } from "../SpotlightTour.context";
@@ -35,8 +35,10 @@ export const TourOverlay = React.forwardRef<TourOverlayRef, TourOverlayProps>((p
     return null;
   }
 
-  const size = useSharedValue({ width: 0, height: 0 })
-  const location = useSharedValue({ x: 0, y: 0 })
+  const sizeWidth = useSharedValue(0)
+  const sizeHeight = useSharedValue(0)
+  const locationX = useSharedValue(0)
+  const locationY = useSharedValue(0)
   const tipOp = useSharedValue(0)
 
   const [tourStep, setTourStep] = useState(steps[current]);
@@ -133,11 +135,15 @@ export const TourOverlay = React.forwardRef<TourOverlayRef, TourOverlayProps>((p
      */
     setTimeout(() => {
       setTipStyle(undefined);
-      size.value.width = withSpring(width + 10)
-      size.value.height = withSpring(height + 10)
-      location.value.x = withSpring(xLoc)
-      location.value.y = withSpring(yLoc)
-      tipOp.value = withTiming(1, { duration: 500 })
+      sizeWidth.value = withTiming(width + 10, { duration: 500,
+  easing: Easing.bezier(0.33, 0.01, 0, 1) })
+      sizeHeight.value = withTiming(height + 10, { duration: 500,
+  easing: Easing.bezier(0.33, 0.01, 0, 1) })
+      locationX.value = withTiming(xLoc - 5, { duration: 500,
+  easing: Easing.bezier(0.33, 0.01, 0, 1) })
+      locationY.value = withTiming(yLoc - 5, { duration: 500,
+  easing: Easing.bezier(0.33, 0.01, 0, 1) })
+      tipOp.value = withDelay(500, withTiming(1, { duration: 500 }))
       // moveIn.start();
     });
   }, [spot, current]);
@@ -163,10 +169,12 @@ export const TourOverlay = React.forwardRef<TourOverlayRef, TourOverlayProps>((p
   }));
 
   const animatedProps = useAnimatedProps<RectProps>(() => ({
-    width: size.value.width,
-    height: size.value.height,
-    x: location.value.x,
-    y: location.value.y
+    width: sizeWidth.value,
+    height: sizeHeight.value,
+    x: locationX.value,
+    y: locationY.value,
+    fill: "black",
+    rx: 5
   }))
 
   const tipOpacityStyle = useAnimatedStyle(() => ({
@@ -195,7 +203,7 @@ export const TourOverlay = React.forwardRef<TourOverlayRef, TourOverlayProps>((p
                 fill="black"
               /> */}
 
-              <AnimatedRect animatedProps={animatedProps} fill="black" />
+              <AnimatedRect animatedProps={animatedProps} />
             </Mask>
           </Defs>
 
