@@ -92,7 +92,7 @@ export const TourOverlay = React.forwardRef<TourOverlayRef, TourOverlayProps>(
                 ? Math.round(cx - tipLayout.width / 2)
                 : Math.round((vwDP(100) - tipLayout.width) / 2),
             marginBottom: tipMargin,
-            top: Math.round(cy - r - tipLayout.height),
+            top: Math.round(yLoc - tipLayout.height - 10),
           };
 
         case Position.LEFT:
