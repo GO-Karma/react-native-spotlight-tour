@@ -54,7 +54,7 @@ export const TourOverlay = React.forwardRef((props, ref) => {
                         ? Math.round(cx - tipLayout.width / 2)
                         : Math.round((vwDP(100) - tipLayout.width) / 2),
                     marginBottom: tipMargin,
-                    top: Math.round(cy - r - tipLayout.height),
+                    top: Math.round(yLoc - tipLayout.height - 10),
                 };
             case Position.LEFT:
                 return {
@@ -150,7 +150,7 @@ export const TourOverlay = React.forwardRef((props, ref) => {
         x: locationX.value,
         y: locationY.value,
         fill: "black",
-        rx: 5,
+        rx: 10,
     }));
     const tipOpacityStyle = useAnimatedStyle(() => ({
         opacity: tipOp.value,
