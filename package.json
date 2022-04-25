@@ -20,7 +20,7 @@
     "test": "jest"
   },
   "dependencies": {
-    "react-native-reanimated": "^2.8.0",
+    "react-native-reanimated": "2.0.0",
     "react-native-responsive-dimensions": "^3.1.1",
     "styled-components": "^5.2.3"
   },
