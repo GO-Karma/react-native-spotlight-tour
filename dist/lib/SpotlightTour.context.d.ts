@@ -15,11 +15,15 @@ export declare type RenderProps = Pick<SpotlightTourCtx, "next" | "previous" | "
     isFirst: boolean;
     isLast: boolean;
 };
+interface onClose {
+    stop?: () => void;
+}
 export interface TourStep {
     alignTo?: Align;
     before?(): void | Promise<void>;
     render(props: RenderProps): React.ReactNode;
     position: Position;
+    onClose?(props: onClose): void | Promise<void>;
 }
 export interface SpotlightTourCtx {
     changeSpot(spot: LayoutRectangle): void;
@@ -35,3 +39,4 @@ export interface SpotlightTourCtx {
 export declare const SpotlightTourContext: import("react").Context<SpotlightTourCtx>;
 export declare type SpotlightTour = Omit<SpotlightTourCtx, "changeSpot" | "spot" | "steps">;
 export declare function useSpotlightTour(): SpotlightTour;
+export {};

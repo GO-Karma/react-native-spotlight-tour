@@ -162,7 +162,7 @@ export const TourOverlay = React.forwardRef((props, ref) => {
                     React.createElement(Mask, { id: "mask", x: 0, y: 0, height: "100%", width: "100%" },
                         React.createElement(Rect, { height: "100%", width: "100%", fill: "#fff" }),
                         React.createElement(AnimatedRect, { animatedProps: animatedProps }))),
-                React.createElement(Rect, { height: "100%", width: "100%", fill: color, mask: "url(#mask)", opacity: opacity })),
+                React.createElement(Rect, { height: "100%", width: "100%", fill: color, mask: "url(#mask)", opacity: opacity, onPress: () => { var _a; return (_a = tourStep.onClose) === null || _a === void 0 ? void 0 : _a.call(tourStep, { stop }); } })),
             React.createElement(TipView, { accessibilityLabel: "Tip Overlay View", onLayout: measureTip, style: [tipStyle, tipOpacityStyle] }, tourStep.render({
                 current,
                 isFirst: current === 0,
