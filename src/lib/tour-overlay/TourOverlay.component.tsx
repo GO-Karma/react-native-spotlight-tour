@@ -235,6 +235,7 @@ export const TourOverlay = React.forwardRef<TourOverlayRef, TourOverlayProps>(
               fill={color}
               mask="url(#mask)"
               opacity={opacity}
+              onPress={() => tourStep.onClose?.({ stop })}
             />
           </Svg>
 

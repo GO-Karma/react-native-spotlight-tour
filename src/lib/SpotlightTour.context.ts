@@ -19,11 +19,16 @@ export type RenderProps = Pick<SpotlightTourCtx, "next" | "previous" | "stop"> &
   isLast: boolean;
 };
 
+interface onClose {
+  stop?: () => void;
+}
+
 export interface TourStep {
   alignTo?: Align;
   before?(): void | Promise<void>;
   render(props: RenderProps): React.ReactNode;
   position: Position;
+  onClose?(props: onClose): void | Promise<void>;
 }
 
 export interface SpotlightTourCtx {
