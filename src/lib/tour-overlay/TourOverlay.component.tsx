@@ -191,8 +191,8 @@ export const TourOverlay = React.forwardRef<TourOverlayRef, TourOverlayProps>(
     }));
 
     const animatedProps = useAnimatedProps<RectProps>(() => ({
-      width: sizeWidth.value,
-      height: sizeHeight.value,
+      width: Math.abs(sizeWidth.value),
+      height: Math.abs(sizeHeight.value),
       x: locationX.value,
       y: locationY.value,
       fill: "black",
