@@ -43,11 +43,11 @@ export const TourOverlay = React.forwardRef<TourOverlayRef, TourOverlayProps>(
       return null;
     }
 
-    const sizeWidth = useSharedValue(0);
-    const sizeHeight = useSharedValue(0);
-    const locationX = useSharedValue(0);
-    const locationY = useSharedValue(0);
-    const tipOp = useSharedValue(0);
+    const sizeWidth = useSharedValue(1);
+    const sizeHeight = useSharedValue(1);
+    const locationX = useSharedValue(1);
+    const locationY = useSharedValue(1);
+    const tipOp = useSharedValue(1);
 
     const [tourStep, setTourStep] = useState(steps[current]);
     const [tipStyle, setTipStyle] = useState<StyleProp<ViewStyle>>();
