@@ -20,6 +20,7 @@
     "test": "jest"
   },
   "dependencies": {
+    "react-native-reanimated": "^2.9.1",
     "react-native-responsive-dimensions": "^3.1.1",
     "styled-components": "^5.2.3"
   },
@@ -50,7 +51,6 @@
   "peerDependencies": {
     "react": ">=16.8.0",
     "react-native": ">=0.50.0",
-    "react-native-reanimated": ">=2.0.0",
     "react-native-svg": ">=12.1.0"
   },
   "resolutions": {
