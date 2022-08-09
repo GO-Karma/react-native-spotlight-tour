@@ -194,9 +194,7 @@ export const TourOverlay = React.forwardRef<TourOverlayRef, TourOverlayProps>(
       width: Math.abs(sizeWidth.value),
       height: Math.abs(sizeHeight.value),
       x: locationX.value,
-      y: locationY.value,
-      fill: "black",
-      rx: 10,
+      y: locationY.value
     }));
 
     const tipOpacityStyle = useAnimatedStyle(() => ({
@@ -225,7 +223,7 @@ export const TourOverlay = React.forwardRef<TourOverlayRef, TourOverlayProps>(
                 fill="black"
               /> */}
 
-                <AnimatedRect animatedProps={animatedProps} />
+                <AnimatedRect animatedProps={animatedProps} fill="black" rx={10} />
               </Mask>
             </Defs>
 
